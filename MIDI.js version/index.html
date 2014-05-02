@@ -1,0 +1,135 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns = "http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <link href="./css/piano.css" media="all" rel="stylesheet" type="text/css">
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js" ></script>
+  <!-- midi.js package -->
+  <script src="./js/MIDI/AudioDetect.js" type="text/javascript"></script>
+  <script src="./js/MIDI/LoadPlugin.js" type="text/javascript"></script>
+  <script src="./js/MIDI/Plugin.js" type="text/javascript"></script>
+  <script src="./js/MIDI/Player.js" type="text/javascript"></script>
+  <script src="./js/MIDI/DOMLoader.XMLHttp.js" type="text/javascript"></script>
+  <!-- extras -->
+  <script src="./js/MIDI/Base64.js" type="text/javascript"></script>
+  <script src="./js/MIDI/base64binary.js" type="text/javascript"></script>
+</head>
+<body>
+
+<div id="pagewrapper">
+  <div id="C1" class="white_key"><div class="black_key"></div></div>
+  <div id="D1" class="white_key"><div class="black_key"></div></div>
+  <div id="E1" class="white_key"></div>
+  <div id="F1" class="white_key"><div class="black_key"></div></div>
+  <div id="G1" class="white_key"><div class="black_key"></div></div>
+  <div id="A1" class="white_key"><div class="black_key"></div></div>
+  <div id="B1" class="white_key"></div>
+  <div id="C2" class="white_key"><div class="black_key"></div></div>
+  <div id="D2" class="white_key"><div class="black_key"></div></div>
+  <div id="E2" class="white_key"></div>
+  <div id="F2" class="white_key"><div class="black_key"></div></div>
+  <div id="G2" class="white_key"><div class="black_key"></div></div>
+  <div id="A2" class="white_key"><div class="black_key"></div></div>
+  <div id="B2" class="white_key"></div>
+  <div id="C3" class="white_key"><div class="black_key"></div></div>
+  <div id="D3" class="white_key"><div class="black_key"></div></div>
+  <div id="E3" class="white_key"></div>
+  <div id="F3" class="white_key"><div class="black_key"></div></div>
+  <div id="G3" class="white_key"><div class="black_key"></div></div>
+  <div id="A3" class="white_key"><div class="black_key"></div></div>
+  <div id="B3" class="white_key"></div>
+  <div id="C4" class="white_key"><div class="black_key"></div></div>
+  <div id="D4" class="white_key"><div class="black_key"></div></div>
+  <div id="E4" class="white_key"></div>
+  <div id="F4" class="white_key"><div class="black_key"></div></div>
+  <div id="G4" class="white_key"><div class="black_key"></div></div>
+  <div id="A4" class="white_key"><div class="black_key"></div></div>
+  <div id="B4" class="white_key"></div>
+  <div id="C4" class="white_key"></div>
+</div>
+
+<div id="content">
+  <p>By Paulo André</p>
+</div>
+
+<script type="text/javascript">
+
+pressed = "";
+times = [];
+silent_night = "zczkzczkhhdff[aafda[a[iaafda[a[ihhlhdfkf[i[oyr";
+debug = true;
+
+window.onload = function () {
+  MIDI.loadPlugin({
+    soundfontUrl: "./soundfont/",
+    instruments: [ "acoustic_grand_piano", "synth_drum" ],
+    callback: function() {
+      MIDI.programChange(0, 0);
+      MIDI.programChange(1, 118);
+      // MIDI.noteOn(0, MIDI.pianoKeyOffset, 127, 0);
+    }
+  });
+};
+
+$(document).keypress(function(thisEvent){
+// function handleKeyPress(thisEvent){
+  // Define mkeys
+  keys = "1234567890-=" + "qwertyuiop[]\\" + "asdfghjkl;" + "zxcvbnm,./";
+  // Play sound
+  character = getChar(thisEvent);
+  if(debug) console.log("Pressed: " + character + "(" + keys.indexOf(character) + ")");
+  // Erases last note
+  if(character == '_'){
+    if (pressed.length > 0){
+      pressed = pressed.substring(0, pressed.length - 1);
+      times.pop();
+    }
+  // Replay song
+  } else if(character == '+'){
+    for (var i = 0; i < pressed.length; i++) {
+      noteNumber = keys.indexOf(pressed[i]);
+      MIDI.noteOn(0, MIDI.pianoKeyOffset + 24 + noteNumber, 127, 0);
+      sleep(1000);
+    };
+  // Play note
+  } else if(pressed.length == 0 || pressed[pressed.length - 1] != character || new Date().getTime() - times[pressed.length - 1] > 100){
+    noteNumber = keys.indexOf(character);
+    MIDI.noteOn(0, MIDI.pianoKeyOffset + 24 + noteNumber, 127, 0);
+    pressed = pressed + character;
+    times.push(new Date().getTime());
+    $('.black_key,.white_key').eq(noteNumber).attr('style', 'background-color:#eee');
+    setTimeout(function(){
+      $('.black_key,.white_key').eq(noteNumber).attr('style', '');
+    },500);
+  }
+  if(debug) console.log(pressed);
+  if(debug) console.log(times);
+});
+
+// event.type must be keypress
+function getChar(thisEvent) {
+  if (thisEvent.which == 32 || thisEvent.which == 32)
+    return '_';
+  if (thisEvent.which == 13 || thisEvent.which == 13)
+    return '+';
+  if (thisEvent.which == null) {
+    return String.fromCharCode(thisEvent.keyCode) // IE
+  } else if (thisEvent.which!=0) {
+    return String.fromCharCode(thisEvent.which)   // the rest
+  } else {
+    return null // special key
+  }
+}
+
+function sleep(milliseconds) {
+  var start = new Date().getTime();
+  for (var i = 0; i < 1e7; i++) {
+    if ((new Date().getTime() - start) > milliseconds){
+      break;
+    }
+  }
+}
+
+</script>
+</body>
+</html>

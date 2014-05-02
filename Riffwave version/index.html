@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>JSKeyboard</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="http://codebase.es/riffwave/riffwave.js"></script>
+  </head>
+  <body onkeypress="return fnIgnoreEnter(event);">
+
+    <p>Hello world! This is HTML5 Boilerplate.</p>
+
+    <script>
+      function fnIgnoreEnter(thisEvent)
+      {
+        // Define mkeys
+        keys = "qwertyuiop[]" + "asdfghjkl;" + "zxcvbnm,./";
+        // Define frequencies associated with keys
+        frequencies = new Array(32);
+        for (var i = 0, initial = 65.406; i < frequencies.length; i++) {
+          frequencies[i] = initial;
+          initial = initial * 1.05946309;
+        };
+        // Play sound
+        console.log("Pressed: " + getChar(thisEvent) + "(" + frequencies[keys.indexOf(getChar(thisEvent))] + ")"); // do nothing
+      }
+      
+      // event.type must be keypress
+      function getChar(thisEvent) {
+        if (thisEvent.which == null) {
+          return String.fromCharCode(thisEvent.keyCode) // IE
+        } else if (thisEvent.which!=0) {
+          return String.fromCharCode(thisEvent.which)   // the rest
+        } else {
+          return null // special key
+        }
+      }
+
+      function simHertz(hz) {
+          var audio = new Audio();
+          var wave = new RIFFWAVE();
+          var data = [];
+
+          wave.header.sampleRate = 44100;
+
+          var seconds = 1;
+
+          for (var i = 0; i < wave.header.sampleRate * seconds; i ++) {
+              data[i] = Math.round(128 + 127 * Math.sin(i * 2 * Math.PI * hz / wave.header.sampleRate));
+          }
+
+          wave.Make(data);
+          audio.src = wave.dataURI;
+          return audio;
+      }
+    </script>
+  </body>
+</html>

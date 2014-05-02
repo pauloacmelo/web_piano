@@ -1,0 +1,40 @@
+body {
+}
+
+#pagewrapper {
+    width: 1225px;
+    height: 500px;
+    margin-left: auto;
+    margin-right: auto;
+    color: black;
+}
+
+#header {
+    float: left;
+}
+
+.white_key {
+    display:block;
+    float: left;
+    height: 222px;
+    width: 41px;
+    border: 1px solid;
+    margin-left: -1px;
+    z-index:1;
+}
+
+.black_key {
+    float: right;
+    background-color: black;
+    height: 127px;
+    width: 22px;
+    margin-right: -11px;
+    z-index:-1;
+}
+
+#content {
+    padding: 20px;
+    margin-bottom: 10px;
+    margin-left: auto;
+    margin-right: auto;
+}
