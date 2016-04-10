@@ -74,7 +74,7 @@ window.onload = function () {
 $(document).keypress(function(thisEvent){
 // function handleKeyPress(thisEvent){
   // Define mkeys
-  keys = "1234567890-=" + "qwertyuiop[]\\" + "asdfghjkl;" + "zxcvbnm,./";
+  keys = "1234567890-=" + "qwertyuiop[]\\" + "asdfghjkl;" + "zxcvbnm,./?><";
   // Play sound
   character = getChar(thisEvent);
   if(debug) console.log("Pressed: " + character + "(" + keys.indexOf(character) + ")");
@@ -93,7 +93,7 @@ $(document).keypress(function(thisEvent){
     };
   // Play note
   } else if(pressed.length == 0 || pressed[pressed.length - 1] != character || new Date().getTime() - times[pressed.length - 1] > 100){
-    noteNumber = keys.indexOf(character);
+    var noteNumber = keys.indexOf(character);
     MIDI.noteOn(0, MIDI.pianoKeyOffset + 24 + noteNumber, 127, 0);
     pressed = pressed + character;
     times.push(new Date().getTime());
